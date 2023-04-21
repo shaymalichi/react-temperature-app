@@ -1,6 +1,5 @@
 import React from "react";
-import weather_api from "./Settings";
-import axios from "axios";
+import Weather from "./Weather";
 
 
 // Create an input text tag where the user can enter some text.
@@ -13,32 +12,23 @@ import axios from "axios";
 
 class Search extends React.Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.inputRef = React.createRef();
-        this.state = {
-            name : '',
-            temp : ''
-        }
+        this.weatherRef = React.createRef();
     }
-    storeInput = async () => {
-        const input = this.inputRef.current;
-        const url = `https://api.openweathermap.org/data/2.5/weather?q=${input.value}&units=metric&appid=${weather_api}`;
-        await axios.get(url).then(res => {
-            const data = res.data;
-            this.setState({temp: data['main'].temp, name : data.name})
 
-        })
-    }
+    handleClick = async  () => {
+        const inputText = this.inputRef.current.value;
+        await this.weatherRef.current.storeInput(inputText);
+    };
+
     render() {
         return (
-
-                <div display = "display: inline-block;">
-                    {this.state.name !== '' ? <p>County: {this.state.name}</p> : null}
-                    {this.state.temp !== '' ? <p>Temp: {this.state.temp}</p> : null}
-                    <input type = "text" placeholder = "Country.." required={true} ref={this.inputRef}/>
-                    <button id={"SearchButton"} onClick={this.storeInput} style={{marginLeft: '10px'}}>Search</button>
-                </div>
-
+            <div style={{ display: 'inline-block' }}>
+                <input type="text" placeholder="Country.." required={true} ref={this.inputRef}/>
+                <button id={'SearchButton'} onClick={this.handleClick} style={{ marginLeft: '10px' }}>Search</button>
+                <Weather ref={this.weatherRef} />
+            </div>
         );
     }
 }
